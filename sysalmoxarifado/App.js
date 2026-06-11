@@ -2,8 +2,8 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Button,
   FlatList,
+  TouchableOpacity,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -117,12 +117,14 @@ export default function App() {
           />
 
           <View style={styles.buttonWrapper}>
-            <Button
-              title="Adicionar material"
+            <TouchableOpacity
+              style={styles.cadastrarButton}
               onPress={adicionarMaterial}
               testID="btn-cadastrar"
               accessibilityLabel="Cadastrar material"
-            />
+            >
+              <Text style={styles.cadastrarText}>Adicionar material</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -208,6 +210,17 @@ const styles = StyleSheet.create({
   },
   buttonWrapper: {
     marginTop: 12,
+  },
+  cadastrarButton: {
+    backgroundColor: '#2563eb',
+    borderRadius: 10,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  cadastrarText: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: '600',
   },
   centered: {
     flex: 1,
