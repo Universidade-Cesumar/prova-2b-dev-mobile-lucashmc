@@ -21,7 +21,7 @@ export default function App() {
   const [quantidadeMaterial, setQuantidadeMaterial] = useState('');
   const [categoriaMaterial, setCategoriaMaterial] = useState('');
 
-  const adicionarMaterial = () => {
+  const adicionarMaterial = async () => {
     const nome = nomeMaterial.trim();
 
     if (!nome) {
@@ -30,17 +30,34 @@ export default function App() {
     }
 
     const novoMaterial = {
-      id: Date.now().toString(),
       nome,
       quantidade: Number(quantidadeMaterial) || 0,
       categoria: categoriaMaterial.trim() || 'Sem categoria',
     };
 
-    setInsumos((listaAtual) => [novoMaterial, ...listaAtual]);
-    setNomeMaterial('');
-    setQuantidadeMaterial('');
-    setCategoriaMaterial('');
-    setError('');
+    try {
+      const resposta = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(novoMaterial),
+      });
+
+      if (!resposta.ok) {
+        throw new Error('Falha ao salvar o material no mock API.');
+      }
+
+      const materialSalvo = await resposta.json();
+
+      setInsumos((listaAtual) => [materialSalvo, ...listaAtual]);
+      setNomeMaterial('');
+      setQuantidadeMaterial('');
+      setCategoriaMaterial('');
+      setError('');
+    } catch (erro) {
+      setError('Não foi possível salvar o material no mock API.');
+    }
   };
 
   useEffect(() => {
@@ -71,7 +88,7 @@ export default function App() {
         <Text style={styles.subtitle}>Insumos carregados da API</Text>
 
         <View style={styles.formCard}>
-          <Text style={styles.label}>Nome do Material</Text>
+          <Text style={styles.label}></Text>
           <TextInput
             style={styles.input}
             placeholder="Digite o nome do material"
@@ -100,7 +117,12 @@ export default function App() {
           />
 
           <View style={styles.buttonWrapper}>
-            <Button title="Adicionar material" onPress={adicionarMaterial} />
+            <Button
+              title="Adicionar material"
+              onPress={adicionarMaterial}
+              testID="btn-cadastrar"
+              accessibilityLabel="Cadastrar material"
+            />
           </View>
         </View>
       </View>
