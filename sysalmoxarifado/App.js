@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from 'react-native';
 
@@ -15,6 +16,7 @@ export default function App() {
   const [insumos, setInsumos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [nomeMaterial, setNomeMaterial] = useState('');
 
   useEffect(() => {
     const carregarInsumos = async () => {
@@ -42,6 +44,17 @@ export default function App() {
       <View style={styles.header}>
         <Text style={styles.title}>Sistema de Almoxarifado</Text>
         <Text style={styles.subtitle}>Insumos carregados da API</Text>
+
+        <View style={styles.formCard}>
+          <Text style={styles.label}>Nome do Material</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Digite o nome do material"
+            value={nomeMaterial}
+            onChangeText={setNomeMaterial}
+            testID="input-nome"
+          />
+        </View>
       </View>
 
       {loading ? (
@@ -92,6 +105,32 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#4b5563',
     marginTop: 4,
+  },
+  formCard: {
+    marginTop: 16,
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 12,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  label: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#111827',
+    marginBottom: 6,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    color: '#111827',
+    backgroundColor: '#f9fafb',
   },
   centered: {
     flex: 1,
