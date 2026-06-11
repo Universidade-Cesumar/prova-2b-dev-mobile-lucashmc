@@ -140,6 +140,7 @@ export default function App() {
         <FlatList
           data={insumos}
           keyExtractor={(item) => String(item.id)}
+          testID="lista-materiais"
           contentContainerStyle={styles.list}
           renderItem={({ item }) => (
             <View style={styles.card}>
