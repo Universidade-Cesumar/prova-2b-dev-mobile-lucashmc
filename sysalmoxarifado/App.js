@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  Button,
   FlatList,
   SafeAreaView,
   StyleSheet,
@@ -17,6 +18,30 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [nomeMaterial, setNomeMaterial] = useState('');
+  const [quantidadeMaterial, setQuantidadeMaterial] = useState('');
+  const [categoriaMaterial, setCategoriaMaterial] = useState('');
+
+  const adicionarMaterial = () => {
+    const nome = nomeMaterial.trim();
+
+    if (!nome) {
+      setError('Informe o nome do material antes de adicionar.');
+      return;
+    }
+
+    const novoMaterial = {
+      id: Date.now().toString(),
+      nome,
+      quantidade: Number(quantidadeMaterial) || 0,
+      categoria: categoriaMaterial.trim() || 'Sem categoria',
+    };
+
+    setInsumos((listaAtual) => [novoMaterial, ...listaAtual]);
+    setNomeMaterial('');
+    setQuantidadeMaterial('');
+    setCategoriaMaterial('');
+    setError('');
+  };
 
   useEffect(() => {
     const carregarInsumos = async () => {
@@ -54,6 +79,29 @@ export default function App() {
             onChangeText={setNomeMaterial}
             testID="input-nome"
           />
+
+          <Text style={[styles.label, styles.spacing]}>Quantidade</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Digite a quantidade"
+            keyboardType="numeric"
+            value={quantidadeMaterial}
+            onChangeText={setQuantidadeMaterial}
+            testID="input-quantidade"
+          />
+
+          <Text style={[styles.label, styles.spacing]}>Categoria</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Digite a categoria"
+            value={categoriaMaterial}
+            onChangeText={setCategoriaMaterial}
+            testID="input-categoria"
+          />
+
+          <View style={styles.buttonWrapper}>
+            <Button title="Adicionar material" onPress={adicionarMaterial} />
+          </View>
         </View>
       </View>
 
@@ -131,6 +179,12 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     color: '#111827',
     backgroundColor: '#f9fafb',
+  },
+  spacing: {
+    marginTop: 10,
+  },
+  buttonWrapper: {
+    marginTop: 12,
   },
   centered: {
     flex: 1,
