@@ -13,6 +13,19 @@ import {
 
 const API_URL = 'https://6a2b3460b687a7d5cbc4f1e7.mockapi.io/insumos';
 
+export function validarRetirada(estoqueAtual, quantidadeRetirada) {
+  const estoque = Number(estoqueAtual);
+  const retirada = Number(quantidadeRetirada);
+
+  return (
+    Number.isFinite(estoque) &&
+    Number.isFinite(retirada) &&
+    estoque >= 0 &&
+    retirada > 0 &&
+    retirada <= estoque
+  );
+}
+
 export default function App() {
   const [insumos, setInsumos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -86,7 +99,13 @@ export default function App() {
     }
 
     const quantidadeAtual = Number(materialAtual.quantidade) || 0;
-    const novaQuantidade = Math.max(0, quantidadeAtual - quantidadeBaixa);
+
+    if (!validarRetirada(quantidadeAtual, quantidadeBaixa)) {
+      setError('A quantidade para retirada é maior que o estoque atual.');
+      return;
+    }
+
+    const novaQuantidade = quantidadeAtual - quantidadeBaixa;
 
     try {
       const resposta = await fetch(`${API_URL}/${materialAtual.id}`, {
