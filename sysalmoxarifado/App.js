@@ -62,6 +62,63 @@ export default function App() {
     }
   };
 
+  const baixarMaterial = async () => {
+    const nome = nomeMaterial.trim();
+    const quantidadeBaixa = Number(retiradaMaterial);
+
+    if (!nome) {
+      setError('Informe o nome do material antes de dar baixa.');
+      return;
+    }
+
+    if (!quantidadeBaixa || quantidadeBaixa <= 0) {
+      setError('Informe uma quantidade válida para a baixa.');
+      return;
+    }
+
+    const materialAtual = insumos.find(
+      (item) => String(item.nome || '').trim().toLowerCase() === nome.toLowerCase(),
+    );
+
+    if (!materialAtual) {
+      setError('Material não encontrado para realizar a baixa.');
+      return;
+    }
+
+    const quantidadeAtual = Number(materialAtual.quantidade) || 0;
+    const novaQuantidade = Math.max(0, quantidadeAtual - quantidadeBaixa);
+
+    try {
+      const resposta = await fetch(`${API_URL}/${materialAtual.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...materialAtual,
+          quantidade: novaQuantidade,
+        }),
+      });
+
+      if (!resposta.ok) {
+        throw new Error('Falha ao confirmar a baixa no mock API.');
+      }
+
+      const materialAtualizado = await resposta.json();
+
+      setInsumos((listaAtual) =>
+        listaAtual.map((item) => (item.id === materialAtual.id ? materialAtualizado : item)),
+      );
+      setNomeMaterial('');
+      setQuantidadeMaterial('');
+      setRetiradaMaterial('');
+      setCategoriaMaterial('');
+      setError('');
+    } catch (erro) {
+      setError('Não foi possível confirmar a baixa no mock API.');
+    }
+  };
+
   useEffect(() => {
     const carregarInsumos = async () => {
       try {
@@ -136,6 +193,15 @@ export default function App() {
               accessibilityLabel="Cadastrar material"
             >
               <Text style={styles.cadastrarText}>Adicionar material</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.cadastrarButton, styles.baixarButton]}
+              onPress={baixarMaterial}
+              testID="btn-baixar"
+              accessibilityLabel="Confirmar baixa"
+            >
+              <Text style={styles.cadastrarText}>Confirmar baixa</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -228,6 +294,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 12,
     alignItems: 'center',
+  },
+  baixarButton: {
+    marginTop: 10,
+    backgroundColor: '#0f766e',
   },
   cadastrarText: {
     color: '#ffffff',
