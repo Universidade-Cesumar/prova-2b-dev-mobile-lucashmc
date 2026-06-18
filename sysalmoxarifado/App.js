@@ -19,6 +19,7 @@ export default function App() {
   const [error, setError] = useState('');
   const [nomeMaterial, setNomeMaterial] = useState('');
   const [quantidadeMaterial, setQuantidadeMaterial] = useState('');
+  const [retiradaMaterial, setRetiradaMaterial] = useState('');
   const [categoriaMaterial, setCategoriaMaterial] = useState('');
 
   const adicionarMaterial = async () => {
@@ -53,6 +54,7 @@ export default function App() {
       setInsumos((listaAtual) => [materialSalvo, ...listaAtual]);
       setNomeMaterial('');
       setQuantidadeMaterial('');
+      setRetiradaMaterial('');
       setCategoriaMaterial('');
       setError('');
     } catch (erro) {
@@ -105,6 +107,16 @@ export default function App() {
             value={quantidadeMaterial}
             onChangeText={setQuantidadeMaterial}
             testID="input-quantidade"
+          />
+
+          <Text style={[styles.label, styles.spacing]}>Quantidade a retirar</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Digite a quantidade a retirar"
+            keyboardType="numeric"
+            value={retiradaMaterial}
+            onChangeText={setRetiradaMaterial}
+            testID="input-retirada"
           />
 
           <Text style={[styles.label, styles.spacing]}>Categoria</Text>
