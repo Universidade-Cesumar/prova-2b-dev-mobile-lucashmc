@@ -119,6 +119,45 @@ export default function App() {
     }
   };
 
+  const excluirMaterial = async () => {
+    const nome = nomeMaterial.trim();
+
+    if (!nome) {
+      setError('Informe o nome do material antes de excluir.');
+      return;
+    }
+
+    const materialAtual = insumos.find(
+      (item) => String(item.nome || '').trim().toLowerCase() === nome.toLowerCase(),
+    );
+
+    if (!materialAtual) {
+      setError('Material não encontrado para exclusão.');
+      return;
+    }
+
+    try {
+      const resposta = await fetch(`${API_URL}/${materialAtual.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!resposta.ok) {
+        throw new Error('Falha ao excluir o material no mock API.');
+      }
+
+      setInsumos((listaAtual) =>
+        listaAtual.filter((item) => item.id !== materialAtual.id),
+      );
+      setNomeMaterial('');
+      setQuantidadeMaterial('');
+      setRetiradaMaterial('');
+      setCategoriaMaterial('');
+      setError('');
+    } catch (erro) {
+      setError('Não foi possível excluir o material no mock API.');
+    }
+  };
+
   useEffect(() => {
     const carregarInsumos = async () => {
       try {
@@ -202,6 +241,15 @@ export default function App() {
               accessibilityLabel="Confirmar baixa"
             >
               <Text style={styles.cadastrarText}>Confirmar baixa</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.cadastrarButton, styles.excluirButton]}
+              onPress={excluirMaterial}
+              testID="btn-excluir"
+              accessibilityLabel="Excluir material"
+            >
+              <Text style={styles.cadastrarText}>Excluir material</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -298,6 +346,10 @@ const styles = StyleSheet.create({
   baixarButton: {
     marginTop: 10,
     backgroundColor: '#0f766e',
+  },
+  excluirButton: {
+    marginTop: 10,
+    backgroundColor: '#b91c1c',
   },
   cadastrarText: {
     color: '#ffffff',
